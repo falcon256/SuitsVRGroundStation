@@ -1,6 +1,22 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+
+
+
+
+
+
+
+//NOTE - HEAVILY MODIFIED!
+//Google up the original instead of using this one if you are not Dan.
+
+
+
+
+
+
+
 using System.Collections.Generic;
 using SysDiag = System.Diagnostics;
 using System.IO;

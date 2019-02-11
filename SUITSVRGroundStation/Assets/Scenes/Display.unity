@@ -210,9 +210,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e549dc8a05fa7fd4ebf01114c9f51830, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  networkControllerSingleton: {fileID: 1340166688}
   port: 32123
-  inMeshInstancePrefab: {fileID: 5334366184785396132, guid: a93d3798b48503742910a478d84d311a,
+  inMeshInstancePrefab: {fileID: 2220637181944359087, guid: a93d3798b48503742910a478d84d311a,
     type: 3}
 --- !u!4 &1340166689
 Transform:
