@@ -38,6 +38,8 @@ namespace HoloToolkit.Unity
         {
             public Vector3[] vertices = null;
             public int[] triangleIndices = null;
+            public float x1 = 0, y1 = 0, z1 = 0;
+            public float x2 = 0, y2 = 0, z2 = 0, w2 = 0;
         }
         /// <summary>
         /// The mesh header consists of two 32 bit integers.
