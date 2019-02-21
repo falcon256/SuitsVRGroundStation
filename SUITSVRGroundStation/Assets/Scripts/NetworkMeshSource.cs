@@ -9,11 +9,11 @@ public class NetworkMeshSource : MonoBehaviour
 {
 
     private static NetworkMeshSource networkMeshSourceSingleton = null;
-    public static NewtworkMeshSource getSingleton() { return networkMeshSourceSingleton; }
+    public static NetworkMeshSource getSingleton() { return networkMeshSourceSingleton; }
 
-    public int serverPort = 32124;
+    public int serverPort = 32123;
     public int targetPort = 32123;
-    public string targetIP = "127.0.0.1";
+    public string targetIP = "192.168.137.1";
     public UdpClient udpClient = null;
     //public Mesh testMesh = null;
     // Start is called before the first frame update
@@ -25,18 +25,18 @@ public class NetworkMeshSource : MonoBehaviour
             return;
         }
         networkMeshSourceSingleton = this;
-        udpClient = new UdpClient(32124);
-        udpClient.Connect(targetIP, 32123);
+        udpClient = new UdpClient(targetPort);
+        udpClient.Connect(targetIP, serverPort);
        
     }
 
-    public sendMesh(Mesh m, Vector3 location, Quaternion rotation)
+    public void sendMesh(Mesh m, Vector3 location, Quaternion rotation)
     {
         List<Mesh> meshes = new List<Mesh>();
         meshes.Add(m);
         //byte[] vectBytes = BitConverter.GetBytes(location);
         //byte[] quatBytes = BitConverter.GetBytes(rotation);
-        byte[] bytes = new bytes[12+16]; // 4 bytes per float
+        byte[] bytes = new byte[12+16]; // 4 bytes per float
 
         Buffer.BlockCopy(bytes, 0, BitConverter.GetBytes(location.x), 0, 4);
         Buffer.BlockCopy(bytes, 4, BitConverter.GetBytes(location.y), 0, 4);

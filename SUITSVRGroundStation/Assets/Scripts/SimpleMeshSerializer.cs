@@ -88,9 +88,9 @@ namespace HoloToolkit.Unity
                 {
                     while (reader.BaseStream.Length - reader.BaseStream.Position >= HeaderSize)
                     {
-                        Debug.Log("Calling ReadMesh.");
+                        //Debug.Log("Calling ReadMesh.");
                         meshes.Add(ReadMesh(reader));
-                        Debug.Log("ReadMesh returned.");
+                        //Debug.Log("ReadMesh returned.");
                     }
                 }
             }
@@ -120,7 +120,7 @@ namespace HoloToolkit.Unity
         /// <returns>Mesh object read from the stream.</returns>
         private static MeshData ReadMesh(BinaryReader reader)
         {
-            Debug.Log("Readmesh called.");
+            //Debug.Log("Readmesh called.");
             SysDiag.Debug.Assert(reader != null);
 
             int vertexCount = 0;
@@ -130,7 +130,7 @@ namespace HoloToolkit.Unity
             ReadMeshHeader(reader, out vertexCount, out triangleIndexCount);
             Vector3[] vertices = ReadVertices(reader, vertexCount);
             int[] triangleIndices = ReadTriangleIndicies(reader, triangleIndexCount);
-            Debug.Log("Creating Mesh.");
+            //Debug.Log("Creating Mesh.");
             // Create the mesh.
             MeshData md = new MeshData();
             
@@ -138,7 +138,7 @@ namespace HoloToolkit.Unity
             md.triangleIndices = triangleIndices;
             // Reconstruct the normals from the vertices and triangles.
             //mesh.RecalculateNormals();
-            Debug.Log("Readmesh returning.");
+            //Debug.Log("Readmesh returning.");
             return md;
         }
 
@@ -165,12 +165,12 @@ namespace HoloToolkit.Unity
         /// <param name="triangleIndexCount">Count of triangle indices in the mesh.</param>
         private static void ReadMeshHeader(BinaryReader reader, out int vertexCount, out int triangleIndexCount)
         {
-            Debug.Log("ReadMeshHeader called.");
+            //Debug.Log("ReadMeshHeader called.");
             SysDiag.Debug.Assert(reader != null);
 
             vertexCount = reader.ReadInt32();
             triangleIndexCount = reader.ReadInt32();
-            Debug.Log("ReadMeshHeader returning.");
+            //Debug.Log("ReadMeshHeader returning.");
         }
 
         /// <summary>
@@ -198,7 +198,7 @@ namespace HoloToolkit.Unity
         /// <returns>Array of Vector3 structures representing the mesh's vertices.</returns>
         private static Vector3[] ReadVertices(BinaryReader reader, int vertexCount)
         {
-            Debug.Log("ReadVertices called.");
+            Debug.Log("ReadVertices called. " + vertexCount);
             SysDiag.Debug.Assert(reader != null);
 
             Vector3[] vertices = new Vector3[vertexCount];
@@ -209,7 +209,7 @@ namespace HoloToolkit.Unity
                                         reader.ReadSingle(),
                                         reader.ReadSingle());
             }
-            Debug.Log("ReadVertices returning.");
+            //Debug.Log("ReadVertices returning.");
             return vertices;
         }
 
@@ -236,7 +236,7 @@ namespace HoloToolkit.Unity
         /// <returns>Array of integers that describe how the vertex indices form triangles.</returns>
         private static int[] ReadTriangleIndicies(BinaryReader reader, int triangleIndexCount)
         {
-            Debug.Log("ReadTriangleIndicies called.");
+            //Debug.Log("ReadTriangleIndicies called.");
             SysDiag.Debug.Assert(reader != null);
 
             int[] triangleIndices = new int[triangleIndexCount];
@@ -245,7 +245,7 @@ namespace HoloToolkit.Unity
             {
                 triangleIndices[i] = reader.ReadInt32();
             }
-            Debug.Log("ReadTriangleIndices returning.");
+            //Debug.Log("ReadTriangleIndices returning.");
             return triangleIndices;
         }
     }
