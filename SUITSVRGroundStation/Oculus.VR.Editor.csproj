@@ -64,6 +64,7 @@
     <Compile Include="Assets\Oculus\VR\Editor\OVRBuild.cs" />
     <Compile Include="Assets\Oculus\VR\Editor\OVRDeviceSelector.cs" />
     <Compile Include="Assets\Oculus\VR\Editor\OVREngineConfigurationUpdater.cs" />
+    <Compile Include="Assets\Oculus\VR\Editor\OVRExpansionFileGenerator.cs" />
     <Compile Include="Assets\Oculus\VR\Editor\OVRGradleGeneration.cs" />
     <Compile Include="Assets\Oculus\VR\Editor\OVRLayerAttributeEditor.cs" />
     <Compile Include="Assets\Oculus\VR\Editor\OVRManifestPreprocessor.cs" />

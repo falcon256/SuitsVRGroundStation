@@ -60,6 +60,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\NetworkCameraFollower.cs" />
     <Compile Include="Assets\Oculus\AudioManager\Scenes\Scripts\TestScript.cs" />
     <Compile Include="Assets\Oculus\AudioManager\Scripts\Audio\AmbienceEmitter.cs" />
     <Compile Include="Assets\Oculus\AudioManager\Scripts\Audio\AudioManager.cs" />
@@ -323,6 +324,10 @@
     <Compile Include="Assets\Oculus\SampleFramework\Usage\Locomotion\Scripts\LocomotionSampleSupport.cs" />
     <Compile Include="Assets\Oculus\SampleFramework\Usage\OVROverlay\Scripts\OVROverlaySample.cs" />
     <Compile Include="Assets\Oculus\SampleFramework\Usage\StartScene\Scripts\StartMenu.cs" />
+    <Compile Include="Assets\Oculus\SampleFramework\Usage\Stereo180Video\Plugins\Android\NativeVideoPlayer.cs" />
+    <Compile Include="Assets\Oculus\SampleFramework\Usage\Stereo180Video\Scripts\MoviePlayerSample.cs" />
+    <Compile Include="Assets\Oculus\SampleFramework\Usage\Stereo180Video\Scripts\OVROverlayMeshGenerator.cs" />
+    <Compile Include="Assets\Oculus\SampleFramework\Usage\Stereo180Video\Scripts\VectorUtil.cs" />
     <Compile Include="Assets\Oculus\Spatializer\Scenes\Standard Assets\Character Controllers\Sources\Scripts\MouseLook.cs" />
     <Compile Include="Assets\Oculus\Spatializer\Scripts\helpers\ONSPReflectionZone.cs" />
     <Compile Include="Assets\Oculus\Spatializer\Scripts\OculusSpatializerUnity.cs" />
@@ -342,8 +347,8 @@
     <Compile Include="Assets\Oculus\VoiceMod\Scripts\OVRVoiceModContext.cs" />
     <Compile Include="Assets\Scripts\InMeshInstance.cs" />
     <Compile Include="Assets\Scripts\NetworkController.cs" />
-    <Compile Include="Assets\Scripts\NetworkMeshSource.cs" />
     <Compile Include="Assets\Scripts\SimpleMeshSerializer.cs" />
+    <Compile Include="Assets\Scripts\VRPainter.cs" />
     <Compile Include="Assets\Wireframe\Examples\Scripts\AutoRotate.cs" />
     <Compile Include="Assets\Wireframe\ImageEffect\WireframeImageEffect.cs" />
     <None Include="Assets\Wireframe\Shaders\Wireframe.cginc" />
@@ -355,6 +360,7 @@
     <None Include="Assets\Oculus\Avatar\Resources\Materials\Version1.5\Avatar_PC_SingleComponent.shader" />
     <None Include="Assets\Wireframe\Shaders\WireframeTransparent.shader" />
     <None Include="Assets\Oculus\SampleFramework\Core\CustomHands\Materials\Hands_DiffBump.shader" />
+    <None Include="Assets\Oculus\SampleFramework\Usage\Stereo180Video\Resources\Multiview Stereo.shader" />
     <None Include="Assets\Oculus\SampleFramework\Usage\Locomotion\Shaders\TriPlanarWorld.shader" />
     <None Include="Assets\Oculus\SampleFramework\Core\CustomHands\Materials\Hands_Transparent.shader" />
     <None Include="Assets\Wireframe\Shaders\WireframeShaded-Unlit.shader" />
@@ -364,6 +370,7 @@
     <None Include="Assets\Oculus\Avatar\Content\Materials\AvatarSurfaceShaderSelfOccluding.shader" />
     <None Include="Assets\Wireframe\Shaders\Resources\WireframeTransparent-Global.shader" />
     <None Include="Assets\Oculus\Avatar\Resources\Materials\AvatarSurfaceShaderSelfOccluding.shader" />
+    <None Include="Assets\Shaders\ProjectorBlobShadow.shader" />
     <None Include="Assets\Oculus\Avatar\Resources\Materials\AvatarSurfaceShaderPBS.shader" />
     <None Include="Assets\Oculus\Avatar\Samples\SocialStarter\README.txt" />
     <None Include="Assets\Oculus\SampleFramework\license.txt" />
