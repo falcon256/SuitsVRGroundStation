@@ -344,9 +344,7 @@ public class NetworkController : MonoBehaviour
         Debug.Log(derp);
     }
 
-    /// <summary> 	
-    /// Send message to client using socket connection. 	
-    /// </summary> 	
+
     public void SendLineRenderer(LineRenderer lr)
     {
         if (connectedTcpClient == null)
@@ -372,26 +370,24 @@ public class NetworkController : MonoBehaviour
             if (conversionArray == null)// TODO throw error here
                 return;
 
-            Vector3 location = new Vector3();
-            Quaternion rotation = new Quaternion();
             byte[] bytes = new byte[4 + 12 + 20]; // 4 bytes per float
             System.Buffer.BlockCopy(BitConverter.GetBytes(36 + (conversionArray.Length)), 0, bytes, 0, 4);
-            System.Buffer.BlockCopy(BitConverter.GetBytes(2), 0, bytes, 4, 4);//type of packet
-            System.Buffer.BlockCopy(BitConverter.GetBytes(location.x), 0, bytes, 8, 4);
-            System.Buffer.BlockCopy(BitConverter.GetBytes(location.y), 0, bytes, 12, 4);
-            System.Buffer.BlockCopy(BitConverter.GetBytes(location.z), 0, bytes, 16, 4);
-            System.Buffer.BlockCopy(BitConverter.GetBytes(rotation.x), 0, bytes, 20, 4);
-            System.Buffer.BlockCopy(BitConverter.GetBytes(rotation.y), 0, bytes, 24, 4);
-            System.Buffer.BlockCopy(BitConverter.GetBytes(rotation.z), 0, bytes, 28, 4);
-            System.Buffer.BlockCopy(BitConverter.GetBytes(rotation.w), 0, bytes, 32, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(4), 0, bytes, 4, 4);//type of packet
+            System.Buffer.BlockCopy(BitConverter.GetBytes(lr.material.color.r), 0, bytes, 8, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(lr.material.color.g), 0, bytes, 12, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(lr.material.color.b), 0, bytes, 16, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(lr.material.color.a), 0, bytes, 20, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(lr.positionCount), 0, bytes, 24, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(lr.startWidth), 0, bytes, 28, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(lr.endWidth), 0, bytes, 32, 4);
             bytes = Combine(bytes, conversionArray);
             // Get a stream object for writing. 			
             NetworkStream stream = connectedTcpClient.GetStream();
             if (stream.CanWrite)
             {
-              
+             
                 stream.Write(bytes, 0, bytes.Length);
-                Debug.Log("Server sent his message - should be received by client");
+                Debug.Log("LineRenderDataSent of length "+ conversionArray.Length);
             }
         }
         catch (SocketException socketException)
@@ -399,6 +395,44 @@ public class NetworkController : MonoBehaviour
             Debug.Log("Socket exception: " + socketException);
         }
     }
+
+
+    public void SendLineUndoRenderer()
+    {
+        if (connectedTcpClient == null)
+        {
+            return;
+        }
+
+        try
+        {
+           
+            Vector3 location = new Vector3();
+            Quaternion rotation = new Quaternion();
+            byte[] bytes = new byte[4 + 12 + 20]; // 4 bytes per float
+            System.Buffer.BlockCopy(BitConverter.GetBytes(36), 0, bytes, 0, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(5), 0, bytes, 4, 4);//type of packet
+            System.Buffer.BlockCopy(BitConverter.GetBytes(location.x), 0, bytes, 8, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(location.y), 0, bytes, 12, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(location.z), 0, bytes, 16, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(rotation.x), 0, bytes, 20, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(rotation.y), 0, bytes, 24, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(rotation.z), 0, bytes, 28, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(rotation.w), 0, bytes, 32, 4);
+            // Get a stream object for writing. 			
+            NetworkStream stream = connectedTcpClient.GetStream();
+            if (stream.CanWrite)
+            {
+                stream.Write(bytes, 0, bytes.Length);
+                Debug.Log("Undo Sent");
+            }
+        }
+        catch (SocketException socketException)
+        {
+            Debug.Log("Socket exception: " + socketException);
+        }
+    }
+
     //stolen useful code.
     public static byte[] Combine(byte[] first, byte[] second)
     {

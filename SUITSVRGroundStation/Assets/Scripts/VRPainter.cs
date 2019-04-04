@@ -75,13 +75,14 @@ public class VRPainter : MonoBehaviour {
         if (OVRInput.GetDown(OVRInput.Button.SecondaryIndexTrigger))
         {
             UndoDrawing();
+            NetworkController.networkControllerSingleton.SendLineUndoRenderer();
         }
 
         if (OVRInput.GetUp(OVRInput.Button.SecondaryHandTrigger))
         {
             m_DrawingStack.Push(m_LineRenderer);
             NetworkController.networkControllerSingleton.SendLineRenderer(m_LineRenderer);
-           m_LineRenderer = null;
+            m_LineRenderer = null;
         }
     }
 
