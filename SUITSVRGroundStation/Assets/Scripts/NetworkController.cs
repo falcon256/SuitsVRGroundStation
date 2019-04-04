@@ -46,16 +46,18 @@ public class NetworkController : MonoBehaviour
         tcpListenerThread.IsBackground = true;
         tcpListenerThread.Start();
 
-        UdpClient myUDP = new UdpClient();
+        myUDP = new UdpClient();
         try
         {
+            myUDP.EnableBroadcast = true;
+            myUDP.ExclusiveAddressUse = false;
             myUDP.Client.Bind(new IPEndPoint(IPAddress.Any, udpPort));   
             Debug.Log("UDP PORT " + udpPort + " Bound");
             udpBound = true;
         }
         catch (Exception e)
         {
-            Debug.Log("Unable to bind udp port.");
+            Debug.Log(""+e.Message);
         }
 
 
@@ -75,27 +77,33 @@ public class NetworkController : MonoBehaviour
     }
 
     private void FixedUpdate()
-    {
+    {/*
         if(myUDP==null||!udpBound)
         {
             try
             {
-                myUDP.Client.Bind(new IPEndPoint(IPAddress.Any, (9000)));
-                Debug.Log("UDP PORT " + udpPort + " Bound");
+                //myUDP.Client.Bind(new IPEndPoint(IPAddress.Any, (9000)));
+                Debug.Log("UDP PORT FAKE " + udpPort + " Bound");
                 udpBound = true;
             }
             catch (Exception e)
             {
-                //Debug.Log("Unable to bind udp port.");
+                Debug.Log(""+e.Message);
             }
         }
+        */
 
 
+        if((udpLastSendTime+10.0f < Time.realtimeSinceStartup)&&(udpBound))
+        {   
 
-        if((udpLastSendTime+10.0f > Time.realtimeSinceStartup)&&(myUDP != null)&&(udpBound))
-        {
             byte[] myIP = System.Text.Encoding.UTF8.GetBytes(GetLocalIPAddress());
+            //myUDP = new UdpClient();
+            //myUDP.ExclusiveAddressUse = false;
+            //myUDP.Client.ExclusiveAddressUse = false;
             myUDP.Send(myIP, myIP.Length, "255.255.255.255", udpPort);
+            //myUDP.Close();
+            //myUDP.Dispose();
             udpLastSendTime = Time.realtimeSinceStartup;
             Debug.Log("Broadcast " + GetLocalIPAddress() + " as target ip.");
         }
@@ -178,13 +186,15 @@ public class NetworkController : MonoBehaviour
     /// </summary> 	
     private void ListenForIncommingRequests()
     {
+
         try
         {
-            // Create listener on localhost port 8052. 			
-            tcpListener = new TcpListener(System.Net.IPAddress.Any, port);
+            System.Net.IPAddress weee;
+            System.Net.IPAddress.TryParse(GetLocalIPAddress(), out weee);
+            tcpListener = new TcpListener(weee, port);
             //tcpListener.AllowNatTraversal(true);
             tcpListener.Start();
-            Debug.Log("Server is listening");
+            Debug.Log("Server is listening on "+ GetLocalIPAddress()+" "+port);
 
             while (true)
             {
