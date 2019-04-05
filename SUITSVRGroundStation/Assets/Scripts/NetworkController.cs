@@ -40,39 +40,50 @@ public class NetworkController : MonoBehaviour
     void Start()
     {
         incomingMeshes = new Queue<HoloToolkit.Unity.SimpleMeshSerializer.MeshData>();
+        myUDP = new UdpClient();
 
-        // Start TcpServer background thread 		
+       
         tcpListenerThread = new Thread(new ThreadStart(ListenForIncommingRequests));
         tcpListenerThread.IsBackground = true;
         tcpListenerThread.Start();
 
-        myUDP = new UdpClient();
         try
         {
             myUDP.EnableBroadcast = true;
             myUDP.ExclusiveAddressUse = false;
-            myUDP.Client.Bind(new IPEndPoint(IPAddress.Any, udpPort));   
+            myUDP.Client.Bind(new IPEndPoint(IPAddress.Parse(GetLocalIPAddress()), udpPort));
             Debug.Log("UDP PORT " + udpPort + " Bound");
             udpBound = true;
+            byte[] myIP = System.Text.Encoding.UTF8.GetBytes(GetLocalIPAddress());
+            myUDP.Send(myIP, myIP.Length, "255.255.255.255", udpPort);
+            udpLastSendTime = Time.realtimeSinceStartup;
+            Debug.Log("Broadcast " + GetLocalIPAddress() + " as target ip.");
         }
         catch (Exception e)
         {
-            Debug.Log(""+e.Message);
-        }
+            Debug.Log("" + e.Message);
+        }        // Start TcpServer background thread 		
+
 
 
     }
 
     public static string GetLocalIPAddress()
     {
+        
         var host = Dns.GetHostEntry(Dns.GetHostName());
+        if (host.AddressList.Length < 1)
+            return "ERROR";
+        var lastip = host.AddressList[0];
         foreach (var ip in host.AddressList)
         {
             if (ip.AddressFamily == AddressFamily.InterNetwork)
             {
                 return ip.ToString();
             }
+            lastip = ip;
         }
+        return lastip.ToString();
         throw new Exception("No network adapters with an IPv4 address in the system!");
     }
 
@@ -92,7 +103,7 @@ public class NetworkController : MonoBehaviour
             }
         }
         */
-
+        
 
         if((udpLastSendTime+10.0f < Time.realtimeSinceStartup)&&(udpBound))
         {   
@@ -107,6 +118,7 @@ public class NetworkController : MonoBehaviour
             udpLastSendTime = Time.realtimeSinceStartup;
             Debug.Log("Broadcast " + GetLocalIPAddress() + " as target ip.");
         }
+        
         //handle incoming meshes
         if (incomingMeshes.Count > 0)
         {
@@ -191,7 +203,7 @@ public class NetworkController : MonoBehaviour
         {
             System.Net.IPAddress weee;
             System.Net.IPAddress.TryParse(GetLocalIPAddress(), out weee);
-            tcpListener = new TcpListener(weee, port);
+            tcpListener = new TcpListener(IPAddress.Any, port);
             //tcpListener.AllowNatTraversal(true);
             tcpListener.Start();
             Debug.Log("Server is listening on "+ GetLocalIPAddress()+" "+port);
@@ -339,7 +351,7 @@ public class NetworkController : MonoBehaviour
         }
         catch (SocketException socketException)
         {
-            Debug.Log("SocketException " + socketException.ToString());
+            Debug.LogError("SocketException " + socketException.ToString());
         }
     }
 
