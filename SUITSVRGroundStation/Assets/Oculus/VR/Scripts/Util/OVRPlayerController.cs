@@ -83,6 +83,8 @@ public class OVRPlayerController : MonoBehaviour
 	/// </summary>
 	public bool useProfileData = true;
 
+    public float m_VerticalMovementSpeed = 2.0f;
+
 	/// <summary>
 	/// The CameraHeight is the actual height of the HMD and can be used to adjust the height of the character controller, which will affect the
 	/// ability of the character to move into areas with a low ceiling.
@@ -207,7 +209,27 @@ public class OVRPlayerController : MonoBehaviour
 
 		if (Input.GetKeyDown(KeyCode.E))
 			buttonRotation += RotationRatchet;
-	}
+
+        if (OVRInput.Get(OVRInput.Button.One))
+        {
+            TranslateDown();
+        }
+
+        if (OVRInput.Get(OVRInput.Button.Two))
+        {
+            TranslateUp();
+        }
+    }
+
+    void TranslateDown()
+    {
+        Controller.Move(-Vector3.up * m_VerticalMovementSpeed * Time.deltaTime);
+    }
+
+    void TranslateUp()
+    {
+        Controller.Move(Vector3.up * m_VerticalMovementSpeed * Time.deltaTime);
+    }
 
 	protected virtual void UpdateController()
 	{
@@ -333,7 +355,7 @@ public class OVRPlayerController : MonoBehaviour
 
 			// No positional movement if we are in the air
 			if (!Controller.isGrounded)
-				MoveScale = 0.0f;
+				//MoveScale = 0.0f;
 
 			MoveScale *= SimulationRate * Time.deltaTime;
 

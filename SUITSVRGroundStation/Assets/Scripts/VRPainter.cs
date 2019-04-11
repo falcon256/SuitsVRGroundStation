@@ -19,7 +19,6 @@ public class VRPainter : MonoBehaviour {
     private int m_ColorIndex;
     private int m_SizeIndex;
 
-    private bool m_ColorRecentlyChanged;
     private bool m_SizeRecentlyChanged;
 
     private LineRenderer m_LineRenderer;
@@ -84,6 +83,12 @@ public class VRPainter : MonoBehaviour {
             NetworkController.networkControllerSingleton.SendLineRenderer(m_LineRenderer);
             m_LineRenderer = null;
         }
+
+        if (OVRInput.GetDown(OVRInput.Button.SecondaryIndexTrigger))
+        {
+            UndoDrawing();
+            NetworkController.networkControllerSingleton.SendLineUndoRenderer();
+        }
     }
 
     private void HandleSizing()
@@ -119,28 +124,11 @@ public class VRPainter : MonoBehaviour {
 
     private void HandleColoring()
     {
-        Vector2 thumbstickInput = OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick);
 
-        //if person presses button to right
-        if (thumbstickInput.x >= 0.8f && m_ColorRecentlyChanged == false)
+        if (OVRInput.GetDown(OVRInput.Button.SecondaryThumbstick))
         {
             m_ColorIndex = Mathf.FloorToInt(Mathf.Repeat((float)m_ColorIndex + 1.0f, m_ColorSelection.Length));
             m_HandColorPickerMat.color = m_ColorSelection[m_ColorIndex];
-
-            m_ColorRecentlyChanged = true;
-
-        }
-        else if (thumbstickInput.x <= -0.8f && m_ColorRecentlyChanged == false)
-        {
-            m_ColorIndex = Mathf.FloorToInt(Mathf.Repeat((float)m_ColorIndex + 1.0f, m_ColorSelection.Length));
-            m_HandColorPickerMat.color = m_ColorSelection[m_ColorIndex];
-
-            m_ColorRecentlyChanged = true;
-
-        }
-        else if (thumbstickInput.x >= -0.5f && thumbstickInput.x <= 0.5f)
-        {
-            m_ColorRecentlyChanged = false;
         }
     }
 

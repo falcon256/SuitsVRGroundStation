@@ -9,6 +9,12 @@ using System.IO;
 using System.Threading;
 using UnityEngine;
 
+//NetworkController.cs
+//Written by Daniel Lambert for the NASA Suits 2019 project.
+//This is prototype code, don't expect perfection. This is divided up and structured only enough to enable my own comprehension. 
+
+
+
 public class NetworkController : MonoBehaviour
 {
     public static NetworkController networkControllerSingleton = null;
@@ -17,14 +23,23 @@ public class NetworkController : MonoBehaviour
     public UdpClient myUDP = null;// new UdpClient(port);
     public float udpLastSendTime = 0;
     public bool udpBound = false;
+    private bool skipUDP = false;
     public TcpListener tcpListener;
     private Thread tcpListenerThread;
     private TcpClient connectedTcpClient;
     public GameObject inMeshInstancePrefab = null;
+    public GameObject textureProjectorPrefab = null;
     public Queue<HoloToolkit.Unity.SimpleMeshSerializer.MeshData> incomingMeshes = null;
-
+    private Queue<imageProjectorData> incomingProjections = null;
     public Vector3 camv = new Vector3();
     public Quaternion camq = new Quaternion();
+
+    private struct imageProjectorData
+    {
+        public byte[] imageData;
+        public Vector3 projectionPos;
+        public Quaternion projectionRot;
+    }
 
     public NetworkController()
     {
@@ -40,19 +55,16 @@ public class NetworkController : MonoBehaviour
     void Start()
     {
         incomingMeshes = new Queue<HoloToolkit.Unity.SimpleMeshSerializer.MeshData>();
+        incomingProjections = new Queue<imageProjectorData>();
         myUDP = new UdpClient();
-
-       
         tcpListenerThread = new Thread(new ThreadStart(ListenForIncommingRequests));
         tcpListenerThread.IsBackground = true;
         tcpListenerThread.Start();
 
         try
         {
+
             myUDP.EnableBroadcast = true;
-            myUDP.ExclusiveAddressUse = false;
-            myUDP.Client.Bind(new IPEndPoint(IPAddress.Parse(GetLocalIPAddress()), udpPort));
-            Debug.Log("UDP PORT " + udpPort + " Bound");
             udpBound = true;
             byte[] myIP = System.Text.Encoding.UTF8.GetBytes(GetLocalIPAddress());
             myUDP.Send(myIP, myIP.Length, "255.255.255.255", udpPort);
@@ -62,10 +74,7 @@ public class NetworkController : MonoBehaviour
         catch (Exception e)
         {
             Debug.Log("" + e.Message);
-        }        // Start TcpServer background thread 		
-
-
-
+        }
     }
 
     public static string GetLocalIPAddress()
@@ -88,33 +97,17 @@ public class NetworkController : MonoBehaviour
     }
 
     private void FixedUpdate()
-    {/*
-        if(myUDP==null||!udpBound)
+    {
+        if(Input.GetKeyDown(KeyCode.F))
         {
-            try
-            {
-                //myUDP.Client.Bind(new IPEndPoint(IPAddress.Any, (9000)));
-                Debug.Log("UDP PORT FAKE " + udpPort + " Bound");
-                udpBound = true;
-            }
-            catch (Exception e)
-            {
-                Debug.Log(""+e.Message);
-            }
+            SendTestLineRenderer();
         }
-        */
-        
 
-        if((udpLastSendTime+10.0f < Time.realtimeSinceStartup)&&(udpBound))
+        if((udpLastSendTime+10.0f < Time.realtimeSinceStartup)&&(udpBound)&&(!skipUDP))
         {   
 
             byte[] myIP = System.Text.Encoding.UTF8.GetBytes(GetLocalIPAddress());
-            //myUDP = new UdpClient();
-            //myUDP.ExclusiveAddressUse = false;
-            //myUDP.Client.ExclusiveAddressUse = false;
             myUDP.Send(myIP, myIP.Length, "255.255.255.255", udpPort);
-            //myUDP.Close();
-            //myUDP.Dispose();
             udpLastSendTime = Time.realtimeSinceStartup;
             Debug.Log("Broadcast " + GetLocalIPAddress() + " as target ip.");
         }
@@ -137,10 +130,6 @@ public class NetworkController : MonoBehaviour
                 Vector3 v = new Vector3(md.x1, md.y1, md.z1);
                 Quaternion q = new Quaternion(md.x2, md.y2, md.z2, md.w2);
                 go.transform.SetPositionAndRotation(v, q);
-                //temp for testing.
-                //Vector3 v = Vector3.zero;
-                //Quaternion q = Quaternion.identity;
-                //set game object position here.
                 go.GetComponent<InMeshInstance>().updateRenderedMesh(mesh);
             }
             catch (Exception e)
@@ -148,54 +137,58 @@ public class NetworkController : MonoBehaviour
                 Debug.LogError("" + e.Message + "\n" + e.StackTrace);
             }
         }
+
+        //handle incoming textures
+        if(incomingProjections.Count>0)
+        {
+            try
+            {
+                imageProjectorData inc = incomingProjections.Dequeue();
+                GameObject go = Instantiate(textureProjectorPrefab);
+                Texture2D tex = new Texture2D(1280, 720, TextureFormat.PVRTC_RGBA4, false);
+                tex.LoadImage(inc.imageData, false);
+                go.GetComponent<Projector>().material.mainTexture = tex;
+                go.transform.parent = this.gameObject.transform;
+                go.transform.position = inc.projectionPos;
+                go.transform.rotation = inc.projectionRot;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("" + e.Message + "\n" + e.StackTrace);
+            }
+        }
     }
+
     void OnDestroy()
-    {
-        
+    {        
         if(myUDP!=null)
         {
             myUDP.Close();
+            myUDP.Dispose();
             myUDP = null;
         }
-    }
-    public static byte[] Compress(byte[] raw)
-    {
-        using (MemoryStream memory = new MemoryStream())
+
+        if(connectedTcpClient!=null)
         {
-            using (GZipStream gzip = new GZipStream(memory, CompressionMode.Compress, true))
-            {
-                gzip.Write(raw, 0, raw.Length);
-            }
-            return memory.ToArray();
+            connectedTcpClient.Close();
+            connectedTcpClient.Dispose();
+            connectedTcpClient = null;
+        }
+
+        if(tcpListenerThread!=null)
+        {
+            tcpListenerThread.Abort();
+            tcpListenerThread = null;
+        }
+
+        if (tcpListener!=null)
+        {           
+            tcpListener.Stop();
+            tcpListener = null;
         }
     }
 
-    static byte[] Decompress(byte[] gzip)
-    {
-        using (GZipStream stream = new GZipStream(new MemoryStream(gzip), CompressionMode.Decompress))
-        {
-            const int size = 4096;
-            byte[] buffer = new byte[size];
-            using (MemoryStream memory = new MemoryStream())
-            {
-                int count = 0;
-                do
-                {
-                    count = stream.Read(buffer, 0, size);
-                    if (count > 0)
-                    {
-                        memory.Write(buffer, 0, count);
-                    }
-                }
-                while (count > 0);
-                return memory.ToArray();
-            }
-        }
-    }
-
-    // <summary> 	
-    /// Runs in background TcpServerThread; Handles incomming TcpClient requests 	
-    /// </summary> 	
+    //Monolithic, she said.
     private void ListenForIncommingRequests()
     {
 
@@ -204,7 +197,6 @@ public class NetworkController : MonoBehaviour
             System.Net.IPAddress weee;
             System.Net.IPAddress.TryParse(GetLocalIPAddress(), out weee);
             tcpListener = new TcpListener(IPAddress.Any, port);
-            //tcpListener.AllowNatTraversal(true);
             tcpListener.Start();
             Debug.Log("Server is listening on "+ GetLocalIPAddress()+" "+port);
 
@@ -214,19 +206,14 @@ public class NetworkController : MonoBehaviour
                 byte[] buffer = null;
                 using (connectedTcpClient = tcpListener.AcceptTcpClient())
                 {
-                    //connectedTcpClient.ReceiveTimeout = 60000;
-                    //connectedTcpClient.SendTimeout = 60000;
-                    //connectedTcpClient.SendBufferSize = 65536;
-
-                    Debug.Log("Connection.");
-                    // Get a stream object for reading 					
+                    skipUDP = true;
+                    Debug.Log("Connection. Restart system to allow a new client to connect.");
                     using (NetworkStream stream = connectedTcpClient.GetStream())
                     {
                         while (connectedTcpClient.Connected)
                         {
                             try
                             {
-
                                 bytes = new Byte[1000000];
                                 buffer = null;
                                 byte[] sizeBytes = new byte[4];
@@ -253,7 +240,6 @@ public class NetworkController : MonoBehaviour
                                     int length = 0;
                                     if ((length = stream.Read(bytes, 0, remaining)) != 0)
                                     {
-                                        //Debug.Log("" + length + " bytes read from stream.");
                                         byte[] minBuf = new byte[length];
                                         if (buffer == null)
                                         {
@@ -265,38 +251,28 @@ public class NetworkController : MonoBehaviour
                                             Array.Copy(bytes, 0, minBuf, 0, length);
                                             buffer = Combine(buffer, minBuf);
                                         }
-                                        //if (length > 0)
-                                        //    Debug.Log("" + remaining + " remaining.");
-
                                     }
                                     remaining -= length;
                                 }
-                                //Debug.Log("" + buffer.Length + " bytes compiled.");
-
                                 var incommingData = new byte[buffer.Length];
                                 Array.Copy(buffer, 0, incommingData, 0, buffer.Length);
                                 Byte[] inBytes = incommingData;
                                 Debug.Log("" + incommingData.Length + " Compressed bytes received.");
-                                //byte[] inBytes = Decompress(incommingData);
-
-
-                                //Debug.Log("" + inBytes.Length + " Bytes recieved. " + (size - 4) + " Expected...");
                                 int packetType = System.BitConverter.ToInt32(inBytes, 0);
+
+                                //Throw an error if we get a bad packet type.
                                 switch(packetType)
                                 {
                                     case (1):
-                                        //Debug.Log("Packet Type Mesh");
-                                        break;
                                     case (2):
-                                        break;
                                     case (3):
                                         break;
                                     default:
                                         Debug.LogError("BAD PACKET TYPE ENCOUNTERED: " + packetType);
                                         debugByteOut(inBytes);
                                         continue;
-                                        //break;//redundant
                                 }
+
                                 float x1 = System.BitConverter.ToSingle(inBytes, 4);
                                 float y1 = System.BitConverter.ToSingle(inBytes, 8);
                                 float z1 = System.BitConverter.ToSingle(inBytes, 12);
@@ -304,14 +280,10 @@ public class NetworkController : MonoBehaviour
                                 float y2 = System.BitConverter.ToSingle(inBytes, 20);
                                 float z2 = System.BitConverter.ToSingle(inBytes, 24);
                                 float w2 = System.BitConverter.ToSingle(inBytes, 28);
-                                //Debug.Log("" + x1 + " " + x2 + " " + y1 + " " + y2 + " " + z1 + " " + z2 + " " + w2 + " " + size + " ");
                                 byte[] subset = new byte[inBytes.Length - 32];
                                 Array.Copy(inBytes, 32, subset, 0, inBytes.Length - 32);
 
-
-                                //Debug.Log("" + System.BitConverter.ToInt32(inBytes, 28) + " " + System.BitConverter.ToInt32(inBytes, 32) + " " + System.BitConverter.ToInt32(inBytes, 36) + " " + System.BitConverter.ToInt32(inBytes, 40));
-
-                                if(packetType==3)
+                                if (packetType == 2)//headset location update
                                 {
                                     Vector3 v = new Vector3(x1, y1, z1);
                                     Quaternion q = new Quaternion(x2, y2, z2, w2);
@@ -319,8 +291,25 @@ public class NetworkController : MonoBehaviour
                                     camq = q;
                                 }
 
+                                if (packetType==3)//camera image, create projector.
+                                {
+                                    Vector3 v = new Vector3(x1, y1, z1);
+                                    Quaternion q = new Quaternion(x2, y2, z2, w2);
+                                    camv = v;
+                                    camq = q;
+                                    //subset contains our image data. Pass it back to the main thread for conversion into a Texture2D
+                                    imageProjectorData newProj = new imageProjectorData
+                                    {
+                                        imageData = subset,
+                                        projectionPos = new Vector3(x1, y1, z1),
+                                        projectionRot = new Quaternion(x2, y2, z2, w2)
+                                    };
+                                    incomingProjections.Enqueue(newProj);
+                                }
+
                                 if (packetType != 1)
                                     continue;
+
                                 HoloToolkit.Unity.SimpleMeshSerializer.MeshData mesh = HoloToolkit.Unity.SimpleMeshSerializer.Deserialize(subset);
 
                                 mesh.x1 = x1;
@@ -330,16 +319,9 @@ public class NetworkController : MonoBehaviour
                                 mesh.z1 = z1;
                                 mesh.z2 = z2;
                                 mesh.w2 = w2;
-
-                                //Vector3 v = new Vector3(x1, y1, z1);
-                                //Quaternion q = new Quaternion(x2, y2, z2, w2);
-                                //Camera.main.transform.rotation = q;
-                                //Camera.main.transform.position = v;
-                                //camv = v;
-                                //camq = q;
-                                //HoloToolkit.Unity.SimpleMeshSerializer.MeshData mesh = HoloToolkit.Unity.SimpleMeshSerializer.Deserialize(incommingData);
+                                
                                 networkControllerSingleton.incomingMeshes.Enqueue(mesh);
-                                //Debug.Log("Mesh enqueued");
+
                             } catch(Exception e)
                             {
                                 Debug.LogError("Bug in Dans Code:"+e.Message + "\n" + e.StackTrace);
@@ -378,22 +360,18 @@ public class NetworkController : MonoBehaviour
         {
             Vector3[] verts = new Vector3[lr.positionCount];
             lr.GetPositions(verts);
-            byte[] conversionArray = null;
-            using (MemoryStream memoryStream = new MemoryStream())
-            {
-                ArrayProxy<Vector3>.Serialize(
-                           memoryStream,
-                           verts,
-                           Vector3Proxy.Serialize);
 
-                //Here is the result
-                conversionArray = memoryStream.ToArray();
+            byte[] outgoingVerts = new byte[verts.Length * 12];
+
+            for(int i = 0; i < verts.Length; i++)
+            {
+                System.Buffer.BlockCopy(BitConverter.GetBytes(verts[i].x), 0, outgoingVerts, ((i * 12) + 0), 4);
+                System.Buffer.BlockCopy(BitConverter.GetBytes(verts[i].x), 0, outgoingVerts, ((i * 12) + 4), 4);
+                System.Buffer.BlockCopy(BitConverter.GetBytes(verts[i].x), 0, outgoingVerts, ((i * 12) + 8), 4);
             }
-            if (conversionArray == null)// TODO throw error here
-                return;
 
             byte[] bytes = new byte[4 + 12 + 20]; // 4 bytes per float
-            System.Buffer.BlockCopy(BitConverter.GetBytes(36 + (conversionArray.Length)), 0, bytes, 0, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(36 + (outgoingVerts.Length)), 0, bytes, 0, 4);
             System.Buffer.BlockCopy(BitConverter.GetBytes(4), 0, bytes, 4, 4);//type of packet
             System.Buffer.BlockCopy(BitConverter.GetBytes(lr.material.color.r), 0, bytes, 8, 4);
             System.Buffer.BlockCopy(BitConverter.GetBytes(lr.material.color.g), 0, bytes, 12, 4);
@@ -402,14 +380,13 @@ public class NetworkController : MonoBehaviour
             System.Buffer.BlockCopy(BitConverter.GetBytes(lr.positionCount), 0, bytes, 24, 4);
             System.Buffer.BlockCopy(BitConverter.GetBytes(lr.startWidth), 0, bytes, 28, 4);
             System.Buffer.BlockCopy(BitConverter.GetBytes(lr.endWidth), 0, bytes, 32, 4);
-            bytes = Combine(bytes, conversionArray);
-            // Get a stream object for writing. 			
+            bytes = Combine(bytes, outgoingVerts);	
             NetworkStream stream = connectedTcpClient.GetStream();
             if (stream.CanWrite)
             {
              
                 stream.Write(bytes, 0, bytes.Length);
-                Debug.Log("LineRenderDataSent of length "+ conversionArray.Length);
+                Debug.Log("LineRenderDataSent of length "+ outgoingVerts.Length);
             }
         }
         catch (SocketException socketException)
@@ -418,6 +395,48 @@ public class NetworkController : MonoBehaviour
         }
     }
 
+    public void SendTestLineRenderer()
+    {
+        if (connectedTcpClient == null)
+        {
+            return;
+        }
+
+        try
+        {
+            Vector3[] verts = { new Vector3(0, 0, 0), new Vector3(1, 1, 1), new Vector3(2, 2, 2), new Vector3(3, 3, 3) };
+            byte[] outgoingVerts = new byte[verts.Length * 12];
+            for (int i = 0; i < verts.Length; i++)
+            {
+                System.Buffer.BlockCopy(BitConverter.GetBytes(verts[i].x), 0, outgoingVerts, ((i * 12) + 0), 4);
+                System.Buffer.BlockCopy(BitConverter.GetBytes(verts[i].y), 0, outgoingVerts, ((i * 12) + 4), 4);
+                System.Buffer.BlockCopy(BitConverter.GetBytes(verts[i].z), 0, outgoingVerts, ((i * 12) + 8), 4);
+            }
+            byte[] bytes = new byte[4 + 12 + 20];
+            System.Buffer.BlockCopy(BitConverter.GetBytes(36 + (outgoingVerts.Length)), 0, bytes, 0, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(4), 0, bytes, 4, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(1.0f), 0, bytes, 8, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(2.0f), 0, bytes, 12, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(3.0f), 0, bytes, 16, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(4.0f), 0, bytes, 20, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(verts.Length), 0, bytes, 24, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(5.0f), 0, bytes, 28, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(6.0f), 0, bytes, 32, 4);
+            bytes = Combine(bytes, outgoingVerts);
+            NetworkStream stream = connectedTcpClient.GetStream();
+
+            if (stream.CanWrite)
+            {
+
+                stream.Write(bytes, 0, bytes.Length);
+                Debug.Log("LineRenderDataSent of length " + outgoingVerts.Length);
+            }
+        }
+        catch (SocketException socketException)
+        {
+            Debug.Log("Socket exception: " + socketException);
+        }
+    }
 
     public void SendLineUndoRenderer()
     {
@@ -441,7 +460,6 @@ public class NetworkController : MonoBehaviour
             System.Buffer.BlockCopy(BitConverter.GetBytes(rotation.y), 0, bytes, 24, 4);
             System.Buffer.BlockCopy(BitConverter.GetBytes(rotation.z), 0, bytes, 28, 4);
             System.Buffer.BlockCopy(BitConverter.GetBytes(rotation.w), 0, bytes, 32, 4);
-            // Get a stream object for writing. 			
             NetworkStream stream = connectedTcpClient.GetStream();
             if (stream.CanWrite)
             {
@@ -463,74 +481,43 @@ public class NetworkController : MonoBehaviour
         System.Buffer.BlockCopy(second, 0, ret, first.Length, second.Length);
         return ret;
     }
-
-    public static class ArrayProxy<T>
-    {
-        public static void Serialize(Stream bytes, T[] instance, Action<Stream, T> serialization)
-        {
-            UShortProxy.Serialize(bytes, (ushort)instance.Length);
-            foreach (T arg in instance)
-            {
-                serialization(bytes, arg);
-            }
-        }
-
-        public static T[] Deserialize(Stream bytes, ArrayProxy<T>.Deserializer<T> serialization)
-        {
-            ushort num = UShortProxy.Deserialize(bytes);
-            T[] array = new T[(int)num];
-            for (int i = 0; i < (int)num; i++)
-            {
-                array[i] = serialization(bytes);
-            }
-            return array;
-        }
-
-        public delegate void Serializer<U>(Stream stream, U instance);
-
-        public delegate U Deserializer<U>(Stream stream);
-    }
-
-    public static class UShortProxy
-    {
-        public static void Serialize(Stream bytes, ushort instance)
-        {
-            byte[] bytes2 = BitConverter.GetBytes(instance);
-            bytes.Write(bytes2, 0, bytes2.Length);
-        }
-
-        public static ushort Deserialize(Stream bytes)
-        {
-            byte[] array = new byte[2];
-            bytes.Read(array, 0, 2);
-            return BitConverter.ToUInt16(array, 0);
-        }
-    }
-
-    public static class Vector3Proxy
-    {
-        public static void Serialize(Stream bytes, Vector3 instance)
-        {
-            bytes.Write(BitConverter.GetBytes(instance.x), 0, 4);
-            bytes.Write(BitConverter.GetBytes(instance.y), 0, 4);
-            bytes.Write(BitConverter.GetBytes(instance.z), 0, 4);
-        }
-
-        public static Vector3 Deserialize(Stream bytes)
-        {
-            byte[] array = new byte[12];
-            bytes.Read(array, 0, 12);
-            return new Vector3(BitConverter.ToSingle(array, 0), BitConverter.ToSingle(array, 4),
-                BitConverter.ToSingle(array, 8));
-        }
-    }
-
-    /*
-     *  byte[] conversionArray = yourConvertedByteArray;
- 
- using (MemoryStream memoryStream = new MemoryStream(conversionArray))
- {
-          //Here is the result
-     Vector3[] data = ArrayProxy<Vector3>.Deserialize(memoryStream, Vector3Proxy.Deserialize);
- }*/
 }
+
+//stale code lives here
+
+/*
+public static byte[] Compress(byte[] raw)
+{
+    using (MemoryStream memory = new MemoryStream())
+    {
+        using (GZipStream gzip = new GZipStream(memory, CompressionMode.Compress, true))
+        {
+            gzip.Write(raw, 0, raw.Length);
+        }
+        return memory.ToArray();
+    }
+}
+
+static byte[] Decompress(byte[] gzip)
+{
+    using (GZipStream stream = new GZipStream(new MemoryStream(gzip), CompressionMode.Decompress))
+    {
+        const int size = 4096;
+        byte[] buffer = new byte[size];
+        using (MemoryStream memory = new MemoryStream())
+        {
+            int count = 0;
+            do
+            {
+                count = stream.Read(buffer, 0, size);
+                if (count > 0)
+                {
+                    memory.Write(buffer, 0, count);
+                }
+            }
+            while (count > 0);
+            return memory.ToArray();
+        }
+    }
+}
+*/
