@@ -139,7 +139,7 @@ public class NetworkController : MonoBehaviour
         }
 
         //handle incoming textures
-        if(incomingProjections.Count>0)
+       /* if(incomingProjections.Count>0)
         {
             try
             {
@@ -156,7 +156,7 @@ public class NetworkController : MonoBehaviour
             {
                 Debug.LogError("" + e.Message + "\n" + e.StackTrace);
             }
-        }
+        }*/
     }
 
     void OnDestroy()
@@ -312,6 +312,8 @@ public class NetworkController : MonoBehaviour
 
                                 HoloToolkit.Unity.SimpleMeshSerializer.MeshData mesh = HoloToolkit.Unity.SimpleMeshSerializer.Deserialize(subset);
 
+                                Debug.Log(x1 + " " + x2 + " " + y1 + " " + y2 + " " + z1 + " " + z2 + " " + w2); 
+
                                 mesh.x1 = x1;
                                 mesh.x2 = x2;
                                 mesh.y1 = y1;
@@ -366,8 +368,8 @@ public class NetworkController : MonoBehaviour
             for(int i = 0; i < verts.Length; i++)
             {
                 System.Buffer.BlockCopy(BitConverter.GetBytes(verts[i].x), 0, outgoingVerts, ((i * 12) + 0), 4);
-                System.Buffer.BlockCopy(BitConverter.GetBytes(verts[i].x), 0, outgoingVerts, ((i * 12) + 4), 4);
-                System.Buffer.BlockCopy(BitConverter.GetBytes(verts[i].x), 0, outgoingVerts, ((i * 12) + 8), 4);
+                System.Buffer.BlockCopy(BitConverter.GetBytes(verts[i].y), 0, outgoingVerts, ((i * 12) + 4), 4);
+                System.Buffer.BlockCopy(BitConverter.GetBytes(verts[i].z), 0, outgoingVerts, ((i * 12) + 8), 4);
             }
 
             byte[] bytes = new byte[4 + 12 + 20]; // 4 bytes per float
