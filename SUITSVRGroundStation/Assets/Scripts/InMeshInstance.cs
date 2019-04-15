@@ -21,7 +21,13 @@ public class InMeshInstance : MonoBehaviour
 
     public void FixedUpdate()
     {
-        if (startTime + 600.0f < Time.realtimeSinceStartup)
+
+        //Color color = myMeshRenderer.material.color;
+        //if(color.a>0)
+        //    color.a -= 0.0001f;
+        //myMeshRenderer.material.color = color;
+
+        if (startTime + 120.0f < Time.realtimeSinceStartup)
         {
             Destroy(this.gameObject);
             Destroy(myMesh);

@@ -34,6 +34,7 @@ public class NetworkController : MonoBehaviour
     public Vector3 camv = new Vector3();
     public Quaternion camq = new Quaternion();
 
+
     private struct imageProjectorData
     {
         public byte[] imageData;
@@ -102,6 +103,7 @@ public class NetworkController : MonoBehaviour
         {
             SendTestLineRenderer();
         }
+
 
         if((udpLastSendTime+10.0f < Time.realtimeSinceStartup)&&(udpBound)&&(!skipUDP))
         {   
