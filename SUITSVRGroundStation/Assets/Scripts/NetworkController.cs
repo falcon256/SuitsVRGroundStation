@@ -33,7 +33,7 @@ public class NetworkController : MonoBehaviour
     private Queue<imageProjectorData> incomingProjections = null;
     public Vector3 camv = new Vector3();
     public Quaternion camq = new Quaternion();
-
+    private bool doReconnect = false;
 
     private struct imageProjectorData
     {
@@ -103,9 +103,21 @@ public class NetworkController : MonoBehaviour
         {
             SendTestLineRenderer();
         }
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            SendTestLineRendererUndo();
+        }
 
 
-        if((udpLastSendTime+10.0f < Time.realtimeSinceStartup)&&(udpBound)&&(!skipUDP))
+        if(doReconnect)
+        {
+            doReconnect = false;
+            tcpListenerThread = new Thread(new ThreadStart(ListenForIncommingRequests));
+            tcpListenerThread.IsBackground = true;
+            tcpListenerThread.Start();
+        }
+
+        if ((udpLastSendTime+10.0f < Time.realtimeSinceStartup)&&(udpBound)&&(!skipUDP))
         {   
 
             byte[] myIP = System.Text.Encoding.UTF8.GetBytes(GetLocalIPAddress());
@@ -268,6 +280,8 @@ public class NetworkController : MonoBehaviour
                                     case (1):
                                     case (2):
                                     case (3):
+                                    case (4):
+                                    case (5):
                                         break;
                                     default:
                                         Debug.LogError("BAD PACKET TYPE ENCOUNTERED: " + packetType);
@@ -329,6 +343,9 @@ public class NetworkController : MonoBehaviour
                             } catch(Exception e)
                             {
                                 Debug.LogError("Bug in Dans Code:"+e.Message + "\n" + e.StackTrace);
+                                doReconnect = true;
+                                return;
+                                // reconnect here.
                             }
                         }
                     }
@@ -433,7 +450,40 @@ public class NetworkController : MonoBehaviour
             {
 
                 stream.Write(bytes, 0, bytes.Length);
-                Debug.Log("LineRenderDataSent of length " + outgoingVerts.Length);
+                Debug.Log("LineRenderDataTestSent of length " + outgoingVerts.Length);
+            }
+        }
+        catch (SocketException socketException)
+        {
+            Debug.Log("Socket exception: " + socketException);
+        }
+    }
+
+    public void SendTestLineRendererUndo()
+    {
+        if (connectedTcpClient == null)
+        {
+            return;
+        }
+
+        try
+        {
+            byte[] bytes = new byte[4 + 12 + 20];
+            System.Buffer.BlockCopy(BitConverter.GetBytes(36), 0, bytes, 0, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(5), 0, bytes, 4, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(1.0f), 0, bytes, 8, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(2.0f), 0, bytes, 12, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(3.0f), 0, bytes, 16, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(4.0f), 0, bytes, 20, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(0), 0, bytes, 24, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(5.0f), 0, bytes, 28, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(6.0f), 0, bytes, 32, 4);
+            NetworkStream stream = connectedTcpClient.GetStream();
+
+            if (stream.CanWrite)
+            {
+                stream.Write(bytes, 0, bytes.Length);
+                Debug.Log("LineRenderDataTestUndoSent of length ");
             }
         }
         catch (SocketException socketException)
