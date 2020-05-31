@@ -64,7 +64,8 @@ public class InputManager : MonoBehaviour
                 {
                     GameObject child = childTransform.gameObject;
                     GameObject newIcon = Instantiate(child);
-                    newIcon.transform.position = child.transform.position; 
+                    newIcon.transform.position = child.transform.position;
+                    newIcon.transform.rotation = child.transform.rotation; 
                     newIcon.transform.parent = null; 
                 }
             }
