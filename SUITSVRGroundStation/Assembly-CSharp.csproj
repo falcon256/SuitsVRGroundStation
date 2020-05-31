@@ -365,6 +365,7 @@
     <Compile Include="Assets\Scripts\NetworkCameraFollower.cs" />
     <Compile Include="Assets\Scripts\NetworkController.cs" />
     <Compile Include="Assets\Scripts\PhotonMeshTransfer.cs" />
+    <Compile Include="Assets\Scripts\PhotonRPCLinks.cs" />
     <Compile Include="Assets\Scripts\SimpleMeshSerializer.cs" />
     <Compile Include="Assets\Scripts\VRPainter.cs" />
     <Compile Include="Assets\Wireframe\Examples\Scripts\AutoRotate.cs" />
