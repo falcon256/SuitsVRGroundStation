@@ -13,7 +13,8 @@ public class NetworkCameraFollower : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        this.gameObject.transform.position = NetworkController.networkControllerSingleton.camv;
-        this.gameObject.transform.rotation = NetworkController.networkControllerSingleton.camq;
+        //TODO Fix this after RPC
+        //this.gameObject.transform.position = NetworkController.networkControllerSingleton.camv;
+        //this.gameObject.transform.rotation = NetworkController.networkControllerSingleton.camq;
     }
 }
