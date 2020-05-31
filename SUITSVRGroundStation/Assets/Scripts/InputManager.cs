@@ -74,6 +74,7 @@ public class InputManager : MonoBehaviour
     public void attachIconToHand(GameObject icon)
     {
         GameObject newIcon = Instantiate(icon);
+        newIcon.transform.position = rightHand.transform.position; 
         foreach (Transform childTransform in rightHand.transform)
         {
             GameObject child = childTransform.gameObject;
