@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Realtime;
 using Photon.Pun;
+using System;
 
 public class PhotonRPCLinks : MonoBehaviourPun
 {
@@ -26,24 +27,29 @@ public class PhotonRPCLinks : MonoBehaviourPun
         Vector3[] verts = new Vector3[lr.positionCount];
         lr.GetPositions(verts);
         PhotonView pv = this.photonView;
+
         Color32 col = lr.material.color;
+        float r = col.r;
+        float g = col.g;
+        float b = col.b;
+
         float width = lr.startWidth;
-        pv.RPC("receiveLineRenderer", RpcTarget.Others, col, (object)verts, (object)width);
+        pv.RPC("receiveLineRenderer", RpcTarget.Others, (object) r, (object) g, (object) b, (object)verts, (object)width);
     }
 
     [PunRPC]
-    void receiveLineRenderer(Color32 col, Vector3[] verts, float width)
+    void receiveLineRenderer(Single r, Single g, Single b, Vector3[] verts, Single width)
     {
         Debug.Log("Got a line renderer of length " + verts.Length);
         GameObject go = new GameObject();
         go.transform.parent = this.gameObject.transform;
         LineRenderer lr = go.AddComponent<LineRenderer>();
         lr.material = new Material(lineRendererDefaultMaterial);//copy
-        lr.material.color = col;
+        lr.material.color = new Color(r,g,b);
         lr.startWidth = width;
         lr.endWidth = width;
         lr.widthMultiplier = 1.0f;
-        lr.endColor = lr.startColor = col;
+        lr.endColor = lr.startColor = new Color(r, g, b);
         lr.positionCount = verts.Length;
         lr.SetVertexCount(verts.Length);
         for (int i = 0; i < verts.Length; i++)
