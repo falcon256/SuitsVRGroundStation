@@ -72,23 +72,19 @@ public class VRPainter : MonoBehaviour {
             }
         }
 
-        if (OVRInput.GetDown(OVRInput.Button.SecondaryIndexTrigger))
-        {
-            UndoDrawing();
-            NetworkController.networkControllerSingleton.SendLineUndoRenderer();
-        }
-
         if (OVRInput.GetUp(OVRInput.Button.SecondaryHandTrigger))
         {
             m_DrawingStack.Push(m_LineRenderer);
-            NetworkController.networkControllerSingleton.SendLineRenderer(m_LineRenderer);
+            //NetworkController.networkControllerSingleton.SendLineRenderer(m_LineRenderer);
+            PhotonRPCLinks.getSingleton().SendLineRenderer(m_LineRenderer);
             m_LineRenderer = null;
         }
 
         if (OVRInput.GetDown(OVRInput.Button.SecondaryIndexTrigger))
         {
             UndoDrawing();
-            NetworkController.networkControllerSingleton.SendLineUndoRenderer();
+            //NetworkController.networkControllerSingleton.SendLineUndoRenderer();
+            PhotonRPCLinks.getSingleton().SendLineRendererUndo();
         }
     }
 
