@@ -39,6 +39,7 @@ public class VRPainter : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
+        if (!InputManager.s.isDrawing) return; 
         HandleColoring();
         HandleSizing();
         HandlePainting();
