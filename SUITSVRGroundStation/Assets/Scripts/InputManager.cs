@@ -1,5 +1,4 @@
-﻿using NUnit.Framework;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -61,8 +60,9 @@ public class InputManager : MonoBehaviour
         {
             if (OVRInput.Get(OVRInput.Button.SecondaryHandTrigger))
             {
-                foreach (GameObject child in rightHand.transform)
+                foreach (Transform childTransform in rightHand.transform)
                 {
+                    GameObject child = childTransform.gameObject;
                     GameObject newIcon = Instantiate(child);
                     newIcon.transform.position = newIcon.transform.position; 
                     newIcon.transform.parent = null; 
@@ -74,8 +74,9 @@ public class InputManager : MonoBehaviour
     public void attachIconToHand(GameObject icon)
     {
         GameObject newIcon = Instantiate(icon);
-        foreach (GameObject child in rightHand.transform)
+        foreach (Transform childTransform in rightHand.transform)
         {
+            GameObject child = childTransform.gameObject;
             Destroy(child); 
         }
         newIcon.transform.SetParent(rightHand, false); 
