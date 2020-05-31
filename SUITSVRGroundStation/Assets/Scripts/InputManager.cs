@@ -116,14 +116,14 @@ public class InputManager : MonoBehaviour
 
     public void drawMode()
     {
-        rightHand.GetComponent<Renderer>().enabled = false;
+        rightHand.GetComponent<Renderer>().enabled = true;
         isDrawing = true;
         isPlacingIcons = false; 
     }
 
     public void textBoxMode()
     {
-        rightHand.GetComponent<Renderer>().enabled = false;
+        rightHand.GetComponent<Renderer>().enabled = true;
         isDrawing = false;
         isPlacingIcons = false; 
         //TODO
