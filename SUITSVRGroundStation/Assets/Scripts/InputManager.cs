@@ -51,21 +51,22 @@ public class InputManager : MonoBehaviour
 
     private void Update()
     {
-        if (OVRInput.GetUp(OVRInput.Button.Two))
+        if (OVRInput.GetUp(OVRInput.Button.Two) || Input.GetKeyUp(KeyCode.DownArrow)) 
         {
             toggleOption();
         }
 
         if (isPlacingIcons)
         {
-            if (OVRInput.GetUp(OVRInput.Button.SecondaryHandTrigger))
+            if (OVRInput.GetUp(OVRInput.Button.SecondaryHandTrigger) || Input.GetKeyUp(KeyCode.Space))
             {
                 foreach (Transform childTransform in rightHand.transform)
                 {
                     GameObject child = childTransform.gameObject;
                     GameObject newIcon = Instantiate(child);
                     newIcon.transform.position = child.transform.position;
-                    newIcon.transform.rotation = child.transform.rotation; 
+                    newIcon.transform.rotation = child.transform.rotation;
+                    newIcon.transform.localScale = new Vector3(1,1,1); 
                     newIcon.transform.parent = null; 
                 }
             }
@@ -74,14 +75,15 @@ public class InputManager : MonoBehaviour
 
     public void attachIconToHand(GameObject icon)
     {
+        rightHand.GetComponent<Renderer>().enabled = false; 
         GameObject newIcon = Instantiate(icon);
-        newIcon.transform.position = rightHand.transform.position; 
         foreach (Transform childTransform in rightHand.transform)
         {
             GameObject child = childTransform.gameObject;
             Destroy(child); 
         }
-        newIcon.transform.SetParent(rightHand, false); 
+        newIcon.transform.SetParent(rightHand, true);
+        newIcon.transform.localPosition = new Vector3(0, 0, 0);
     }
 
     public void arrowMode()
@@ -114,12 +116,14 @@ public class InputManager : MonoBehaviour
 
     public void drawMode()
     {
+        rightHand.GetComponent<Renderer>().enabled = false;
         isDrawing = true;
         isPlacingIcons = false; 
     }
 
     public void textBoxMode()
     {
+        rightHand.GetComponent<Renderer>().enabled = false;
         isDrawing = false;
         isPlacingIcons = false; 
         //TODO
