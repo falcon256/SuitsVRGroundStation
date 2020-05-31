@@ -384,12 +384,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ce816f2e6abb0504092c23ed9b970dfd, type: 3}
---- !u!4 &125035309 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4471613377008970, guid: ce816f2e6abb0504092c23ed9b970dfd,
-    type: 3}
-  m_PrefabInstance: {fileID: 125035308}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &125035310 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4188412984752900, guid: ce816f2e6abb0504092c23ed9b970dfd,
@@ -895,7 +889,7 @@ MonoBehaviour:
   rectanglePrefab: {fileID: 4642763115069766484, guid: 6bf53cb04530af341a401b35e0ab91ea,
     type: 3}
   xPrefab: {fileID: 1271365917134857176, guid: 8b8e62f81dc5ac64b8e0eaa51a0b9995, type: 3}
-  rightHand: {fileID: 125035309}
+  rightHand: {fileID: 1469394376}
   isDrawing: 0
   isPlacingIcons: 0
 --- !u!4 &989002406
