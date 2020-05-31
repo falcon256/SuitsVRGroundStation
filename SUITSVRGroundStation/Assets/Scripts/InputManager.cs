@@ -51,14 +51,14 @@ public class InputManager : MonoBehaviour
 
     private void Update()
     {
-        if (OVRInput.Get(OVRInput.Button.Two))
+        if (OVRInput.GetUp(OVRInput.Button.Two))
         {
             toggleOption();
         }
 
         if (isPlacingIcons)
         {
-            if (OVRInput.Get(OVRInput.Button.SecondaryHandTrigger))
+            if (OVRInput.GetUp(OVRInput.Button.SecondaryHandTrigger))
             {
                 foreach (Transform childTransform in rightHand.transform)
                 {

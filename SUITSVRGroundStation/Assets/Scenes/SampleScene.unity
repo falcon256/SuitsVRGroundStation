@@ -801,7 +801,7 @@ MonoBehaviour:
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 989002405}
-        m_MethodName: circleMode
+        m_MethodName: drawMode
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -897,6 +897,7 @@ MonoBehaviour:
   xPrefab: {fileID: 1271365917134857176, guid: 8b8e62f81dc5ac64b8e0eaa51a0b9995, type: 3}
   rightHand: {fileID: 125035309}
   isDrawing: 0
+  isPlacingIcons: 0
 --- !u!4 &989002406
 Transform:
   m_ObjectHideFlags: 0
