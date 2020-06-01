@@ -39,6 +39,8 @@ MonoBehaviour:
   - RespawnSpaceship
   - receiveLineRenderer
   - receiveLineRendererUndo
+  - receiveIconSpawn
+  - receiveCrewMemberLocation
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

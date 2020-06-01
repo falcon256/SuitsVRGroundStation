@@ -19,7 +19,12 @@ public class InputManager2D : MonoBehaviour
     public GameObject rectanglePrefab;
     public GameObject xPrefab;
 
+    public GameObject tempObject = null;
     public GameObject cursorObject = null;
+
+    private Vector3 placementLocation = Vector3.zero;
+    private Quaternion placementRotation = Quaternion.identity;
+    private bool isMouseDown = false;
 
     public bool isDrawing = false;
     public bool isPlacingIcons = false; 
@@ -31,7 +36,6 @@ public class InputManager2D : MonoBehaviour
         s = this;
         currentOptionSelected = 0;
         buttons[currentOptionSelected].color = Color.red;
-        //buttonActions[currentOptionSelected].Invoke();
     }
 
     private void toggleOption()
@@ -46,8 +50,19 @@ public class InputManager2D : MonoBehaviour
             currentOptionSelected++; 
         }
         buttons[currentOptionSelected].color = Color.red;
-        buttons[currentOptionSelected].fontStyle = FontStyle.Bold;
-        buttonActions[currentOptionSelected].Invoke(); 
+        buttons[currentOptionSelected].fontStyle = FontStyle.Bold; 
+    }
+
+    public void setSelectedOption(int option)
+    {
+        currentOptionSelected = option;
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            buttons[i].color = Color.black;
+            buttons[i].fontStyle = FontStyle.Normal;
+        }
+        buttons[option].color = Color.red;
+        buttons[option].fontStyle = FontStyle.Bold;
     }
 
     public void arrowMode()
@@ -106,6 +121,85 @@ public class InputManager2D : MonoBehaviour
         }
         if (isPlacingIcons)
         {
+            //the Input.GetMouseButtonDown/Input.GetMouseButtonUp were being funky. so wrote my own togglyness.
+            //set the location on mouse down
+            if(!isMouseDown && Input.GetMouseButton(0))
+            {
+                isMouseDown = true;
+                placementLocation = cursorObject.transform.position;
+            }
+            //set the rotation on mouse up
+            if(isMouseDown &&!Input.GetMouseButton(0))
+            {
+                isMouseDown = false;
+                //cursorObject.transform.LookAt(placementLocation,Vector3.up);//Kinda gotta do this the hard way it turns out
+                placementRotation.eulerAngles = new Vector3(90.0f, 0, 0);
+                //placementRotation = cursorObject.transform.rotation;
+                Vector3 locationDif = placementLocation - cursorObject.transform.position;
+                Vector2 topDownVec = new Vector2(locationDif.x, locationDif.z);
+                float angle = Vector2.SignedAngle(new Vector2(0, 1.0f), topDownVec);
+                placementRotation = placementRotation * Quaternion.Euler(new Vector3(0, 0, angle+90));//Spaghetti math ftw!
+                
+                
+                
+                
+
+              switch(currentOptionSelected)
+                {
+                    case (3):
+                        PhotonRPCLinks.getSingleton().sendIconSpawn(placementLocation, placementRotation, PhotonRPCLinks.iconType.ARROW);
+                        break;
+                    case (4):
+                        PhotonRPCLinks.getSingleton().sendIconSpawn(placementLocation, placementRotation, PhotonRPCLinks.iconType.CIRCLE);
+                        break;
+                    case (5):
+                        PhotonRPCLinks.getSingleton().sendIconSpawn(placementLocation, placementRotation, PhotonRPCLinks.iconType.RECTANGLE);
+                        break;
+                    case (6):
+                        PhotonRPCLinks.getSingleton().sendIconSpawn(placementLocation, placementRotation, PhotonRPCLinks.iconType.X);
+                        break;
+                    default:
+                        Debug.LogError("Not sure how this happenened, but good job.");
+                        break;
+                }
+
+                //axe the temp object
+                Destroy(tempObject);
+                tempObject = null;
+            }
+
+            if(isMouseDown && Input.GetMouseButton(0) && tempObject==null)
+            {
+                switch (currentOptionSelected)
+                {
+                    case (3):
+                        tempObject = GameObject.Instantiate(arrowPrefab, placementLocation, placementRotation, this.transform);
+                        break;
+                    case (4):
+                        tempObject = GameObject.Instantiate(circlePrefab, placementLocation, placementRotation, this.transform);
+                        break;
+                    case (5):
+                        tempObject = GameObject.Instantiate(rectanglePrefab, placementLocation, placementRotation, this.transform);
+                        break;
+                    case (6):
+                        tempObject = GameObject.Instantiate(xPrefab, placementLocation, placementRotation, this.transform);
+                        break;
+                    default:
+                        Debug.LogError("Not sure how this happenened, but good job.");
+                        break;
+                }
+            }
+            if (isMouseDown && Input.GetMouseButton(0) && tempObject)
+            {
+                placementRotation.eulerAngles = new Vector3(90.0f, 0, 0);
+                Vector3 locationDif = placementLocation - cursorObject.transform.position;
+                Vector2 topDownVec = new Vector2(locationDif.x, locationDif.z);
+                float angle = Vector2.SignedAngle(new Vector2(0, 1.0f), topDownVec);
+                placementRotation = placementRotation * Quaternion.Euler(new Vector3(0, 0, angle + 90));//Spaghetti math ftw!
+                tempObject.transform.position = placementLocation;
+                tempObject.transform.rotation = placementRotation;
+            }
+
             /*
             GameObject child = cursorObject.gameObject;
             GameObject newIcon = Instantiate(child);
