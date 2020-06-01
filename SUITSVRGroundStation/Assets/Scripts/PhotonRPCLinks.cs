@@ -4,6 +4,7 @@ using UnityEngine;
 using Photon.Realtime;
 using Photon.Pun;
 using System;
+using TMPro;
 
 public class PhotonRPCLinks : MonoBehaviourPun
 {

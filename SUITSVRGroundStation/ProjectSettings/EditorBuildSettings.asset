@@ -11,10 +11,10 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/TestSend.unity
     guid: 5015f55d421f8114198f08b5b5a9f4e9
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/TopDownGroundStation.unity
     guid: 208cb0fd9c49108438d09bb1da46d016
   m_configObjects: {}

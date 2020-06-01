@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI; 
 
 public class InputManager : MonoBehaviour
 {
-    public static InputManager s;
+    private static InputManager singleton;
 
     public Text[] buttons;
 
@@ -16,9 +17,9 @@ public class InputManager : MonoBehaviour
     public GameObject arrowPrefab;
     public GameObject circlePrefab;
     public GameObject rectanglePrefab;
+    public GameObject textPrefab;
     public GameObject xPrefab;
-
-    public Transform rightHand;
+    public GameObject rightHand;
 
     public bool isDrawing = false;
     public bool isPlacingIcons = false; 
@@ -27,10 +28,18 @@ public class InputManager : MonoBehaviour
 
     private void Start()
     {
-        s = this;
+        if (!singleton)
+            singleton = this;
+        else
+            Debug.LogError("InputManager Singleton duplication.");
         currentOptionSelected = 0;
         buttons[currentOptionSelected].color = Color.red;
         buttonActions[currentOptionSelected].Invoke();
+    }
+
+    public static InputManager getSingleton()
+    {
+        return singleton;
     }
 
     private void toggleOption()
@@ -60,14 +69,38 @@ public class InputManager : MonoBehaviour
         {
             if (OVRInput.GetUp(OVRInput.Button.SecondaryHandTrigger) || Input.GetKeyUp(KeyCode.Space))
             {
+                Vector3 placementLocation = rightHand.transform.position;
+                Quaternion placementRotation = rightHand.transform.rotation;
                 foreach (Transform childTransform in rightHand.transform)
-                {
+                {                   
                     GameObject child = childTransform.gameObject;
-                    GameObject newIcon = Instantiate(child);
-                    newIcon.transform.position = child.transform.position;
-                    newIcon.transform.rotation = child.transform.rotation;
-                    newIcon.transform.localScale = new Vector3(1,1,1); 
-                    newIcon.transform.parent = null; 
+                    //GameObject newIcon = Instantiate(child);
+                    //newIcon.transform.position = child.transform.position;
+                    //newIcon.transform.rotation = child.transform.rotation;
+                    //newIcon.transform.localScale = new Vector3(1,1,1); 
+                    //newIcon.transform.parent = null; 
+                    placementLocation = child.transform.position;
+                    placementRotation = child.transform.rotation;
+                }
+                
+                
+                switch (currentOptionSelected)
+                {
+                    case (1):
+                        PhotonRPCLinks.getSingleton().sendIconSpawn(placementLocation, placementRotation, PhotonRPCLinks.iconType.ARROW);
+                        break;
+                    case (2):
+                        PhotonRPCLinks.getSingleton().sendIconSpawn(placementLocation, placementRotation, PhotonRPCLinks.iconType.RECTANGLE);
+                        break;
+                    case (3):
+                        PhotonRPCLinks.getSingleton().sendIconSpawn(placementLocation, placementRotation, PhotonRPCLinks.iconType.CIRCLE);
+                        break;
+                    case (5):
+                        PhotonRPCLinks.getSingleton().sendIconSpawn(placementLocation, placementRotation, PhotonRPCLinks.iconType.X);
+                        break;
+                    default:
+                        Debug.LogError("Not sure how this happenened, but good job.");
+                        break;
                 }
             }
         }
@@ -75,19 +108,22 @@ public class InputManager : MonoBehaviour
 
     public void attachIconToHand(GameObject icon)
     {
-        rightHand.GetComponent<Renderer>().enabled = false; 
+
+        rightHand.GetComponent<MeshRenderer>().enabled = false;
         GameObject newIcon = Instantiate(icon);
         foreach (Transform childTransform in rightHand.transform)
         {
             GameObject child = childTransform.gameObject;
             Destroy(child); 
         }
-        newIcon.transform.SetParent(rightHand, true);
+        newIcon.transform.SetParent(rightHand.transform, true);
         newIcon.transform.localPosition = new Vector3(0, 0, 0);
     }
 
     public void arrowMode()
     {
+        if (rightHand.GetComponent<MeshRenderer>())
+            rightHand.GetComponent<MeshRenderer>().enabled = false;
         isDrawing = false;
         isPlacingIcons = true; 
         attachIconToHand(arrowPrefab); 
@@ -95,6 +131,8 @@ public class InputManager : MonoBehaviour
 
     public void circleMode()
     {
+        if (rightHand.GetComponent<MeshRenderer>())
+            rightHand.GetComponent<MeshRenderer>().enabled = false;
         isDrawing = false;
         isPlacingIcons = true; 
         attachIconToHand(circlePrefab); 
@@ -102,6 +140,8 @@ public class InputManager : MonoBehaviour
 
     public void xMode()
     {
+        if (rightHand.GetComponent<MeshRenderer>())
+            rightHand.GetComponent<MeshRenderer>().enabled = false;
         isDrawing = false;
         isPlacingIcons = true; 
         attachIconToHand(xPrefab); 
@@ -109,6 +149,8 @@ public class InputManager : MonoBehaviour
 
     public void rectangleMode()
     {
+        if (rightHand.GetComponent<MeshRenderer>())
+            rightHand.GetComponent<MeshRenderer>().enabled = false;
         isDrawing = false;
         isPlacingIcons = true; 
         attachIconToHand(rectanglePrefab); 
@@ -116,16 +158,28 @@ public class InputManager : MonoBehaviour
 
     public void drawMode()
     {
-        rightHand.GetComponent<Renderer>().enabled = true;
+        if(rightHand.GetComponent<MeshRenderer>())
+            rightHand.GetComponent<MeshRenderer>().enabled = true;
         isDrawing = true;
-        isPlacingIcons = false; 
+        isPlacingIcons = false;
+        foreach (Transform childTransform in rightHand.transform)
+        {
+            GameObject child = childTransform.gameObject;
+            Destroy(child);
+        }
     }
 
     public void textBoxMode()
     {
-        rightHand.GetComponent<Renderer>().enabled = true;
+        if (rightHand.GetComponent<MeshRenderer>())
+            rightHand.GetComponent<MeshRenderer>().enabled = true;
         isDrawing = false;
-        isPlacingIcons = false; 
-        //TODO
+        isPlacingIcons = false;
+        foreach (Transform childTransform in rightHand.transform)
+        {
+            GameObject child = childTransform.gameObject;
+            Destroy(child);
+        }
+        
     }
 }

@@ -22,7 +22,7 @@ public class VRPainter : MonoBehaviour {
     private bool m_SizeRecentlyChanged;
 
     private LineRenderer m_LineRenderer;
-    private LineRenderer m_PreviousLineRenderer; //needed for undoing 
+    //private LineRenderer m_PreviousLineRenderer; //needed for undoing  - No it isn't!(Dan)
     private Stack<LineRenderer> m_DrawingStack;
     private float m_PaintingTime;
 
@@ -36,10 +36,10 @@ public class VRPainter : MonoBehaviour {
         m_HandColorPickerMat.color = m_ColorSelection[0];
     }
 	
-	// Update is called once per frame
-	void Update ()
+
+	void FixedUpdate ()
     {
-        if (!InputManager.s.isDrawing) return; 
+        if (!InputManager.getSingleton().isDrawing) return; 
         HandleColoring();
         HandleSizing();
         HandlePainting();
