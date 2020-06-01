@@ -12,6 +12,14 @@ public class PhotonRPCLinks : MonoBehaviourPun
     public Material lineRendererDefaultMaterial = null;
     private Stack<LineRenderer> lineRenderers = null;
 
+    public GameObject ArrowPrefab = null;
+    public GameObject CirclePrefab = null;
+    public GameObject RectanglePrefab = null;
+    public GameObject XPrefab = null;
+
+    public enum iconType { ARROW, CIRCLE, RECTANGLE, X };
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -81,4 +89,44 @@ public class PhotonRPCLinks : MonoBehaviourPun
         lr.enabled = false;
         Destroy(lr.gameObject);
     }
+
+    public void sendIconSpawn(Vector3 pos, Quaternion rot, iconType type)
+    {
+        PhotonView pv = this.photonView;
+        pv.RPC("receiveIconSpawn", RpcTarget.Others, (object)pos, (object)rot, (object)type);
+    }
+
+    [PunRPC]
+    public void receiveIconSpawn(Vector3 pos, Quaternion rot, iconType type)
+    {
+        GameObject selectedPrefab = null;
+        switch(type)
+        {
+            case (iconType.ARROW):
+                selectedPrefab = ArrowPrefab;
+                break;
+            case (iconType.CIRCLE):
+                selectedPrefab = CirclePrefab;
+                break;
+            case (iconType.RECTANGLE):
+                selectedPrefab = RectanglePrefab;
+                break;
+            case (iconType.X):
+                selectedPrefab = XPrefab;
+                break;
+            default:
+                selectedPrefab = null;
+                break;
+        };
+
+        if (selectedPrefab == null)
+        {
+            Debug.LogError("THE WRONG ENUM WAS USED!");
+            return;
+        }
+        //TODO - DAN - GENERATE GAMEOBJECT AT THIS POINT!
+
+
+    }
+
 }
