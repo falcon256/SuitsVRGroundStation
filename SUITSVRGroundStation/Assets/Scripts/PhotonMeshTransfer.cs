@@ -73,6 +73,15 @@ public class PhotonMeshTransfer : MonoBehaviourPun
         meesh.RecalculateTangents();
         newMesh.GetComponent<MeshFilter>().mesh = meesh;
         newMesh.GetComponent<MeshRenderer>().material = meshMaterial;
+
+        MeshCollider col = newMesh.GetComponent<MeshCollider>();
+        if (col != null)
+        {
+            col.sharedMesh = meesh;
+            col.convex = false;
+            col.enabled = true;
+        }
+
     }
 
     public static PhotonMeshTransfer getSingleton()
