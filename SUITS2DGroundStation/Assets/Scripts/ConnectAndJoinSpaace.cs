@@ -1,12 +1,8 @@
-
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-
 using UnityEngine;
-
 using Photon.Pun;
 using Photon.Realtime;
+using Photon.Pun.Demo.Cockpit;
+using System;
 
 namespace Photon.Pun.UtilityScripts
 {
@@ -20,6 +16,9 @@ namespace Photon.Pun.UtilityScripts
         /// <summary>Used as PhotonNetwork.GameVersion.</summary>
         public byte Version = 1;
 
+        private bool isConnecting = false;
+        public static bool isConnected = false;
+        public static int disconnectCount = 0;
 
         public void Start()
         {
@@ -29,12 +28,35 @@ namespace Photon.Pun.UtilityScripts
             }
         }
 
+        public void FixedUpdate()
+        {
+            if (PhotonNetwork.InRoom)
+                return;
+            if (!isConnecting && !PhotonNetwork.InRoom)
+            {
+                if (PhotonNetwork.InLobby)
+                {
+                    RoomOptions roomOptions = new RoomOptions();
+                    roomOptions.IsVisible = true;
+                    roomOptions.MaxPlayers = 4;
+                    roomOptions.IsOpen = true;
+                    PhotonNetwork.JoinOrCreateRoom("Spaace", roomOptions, TypedLobby.Default);
+                    isConnecting = true;
+                }
+                else
+                {
+                    ConnectNow();
+                }
+            }
+        }
+
         public void ConnectNow()
         {
+            isConnecting = true;
             Debug.Log("ConnectAndJoinSpaace.ConnectNow() will now call: PhotonNetwork.ConnectUsingSettings().");
             PhotonNetwork.ConnectUsingSettings();
-            PhotonNetwork.GameVersion = this.Version+"";
-            
+            PhotonNetwork.GameVersion = this.Version + "";
+
         }
 
 
@@ -49,8 +71,9 @@ namespace Photon.Pun.UtilityScripts
             RoomOptions roomOptions = new RoomOptions();
             roomOptions.IsVisible = true;
             roomOptions.MaxPlayers = 4;
-            roomOptions.IsOpen = true;           
+            roomOptions.IsOpen = true;
             PhotonNetwork.JoinOrCreateRoom("Spaace", roomOptions, TypedLobby.Default);
+            isConnecting = true;
         }
 
         public override void OnJoinedLobby()
@@ -62,23 +85,39 @@ namespace Photon.Pun.UtilityScripts
             roomOptions.MaxPlayers = 4;
             roomOptions.IsOpen = true;
             PhotonNetwork.JoinOrCreateRoom("Spaace", roomOptions, TypedLobby.Default);
+            isConnecting = true;
         }
 
         public override void OnJoinRandomFailed(short returnCode, string message)
         {
             Debug.Log("OnJoinRandomFailed() was called by PUN. No random room available, so we create one. Calling: PhotonNetwork.CreateRoom(null, new RoomOptions() {maxPlayers = 4}, null);");
-            PhotonNetwork.CreateRoom(null, new RoomOptions() { MaxPlayers = 4 }, null);
+            RoomOptions roomOptions = new RoomOptions();
+            roomOptions.IsVisible = true;
+            roomOptions.MaxPlayers = 4;
+            roomOptions.IsOpen = true;
+            PhotonNetwork.JoinOrCreateRoom("Spaace", roomOptions, TypedLobby.Default);
+            isConnecting = true;
         }
 
         // the following methods are implemented to give you some context. re-implement them as needed.
         public override void OnDisconnected(DisconnectCause cause)
         {
-			Debug.Log("OnDisconnected("+cause+")");
+            Debug.LogError("OnDisconnected(" + cause + ")");
+            isConnecting = false;
+            isConnected = false;
+            disconnectCount++;
+
+            PhotonNetwork.QuickResends = UnityEngine.Random.Range(2, 10);
+            PhotonNetwork.MaxResendsBeforeDisconnect = UnityEngine.Random.Range(2, 100);
+            PhotonNetwork.NetworkingClient.LoadBalancingPeer.MaximumTransferUnit = UnityEngine.Random.Range(10, 1000);
+
         }
 
         public override void OnJoinedRoom()
         {
             Debug.Log("OnJoinedRoom() called by PUN. Now this client is in a room. From here on, your game would be running.");
+            isConnecting = false;
+            isConnected = true;
         }
     }
 }

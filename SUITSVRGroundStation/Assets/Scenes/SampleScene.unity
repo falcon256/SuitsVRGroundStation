@@ -379,7 +379,7 @@ MonoBehaviour:
   m_LineRendererPrefab: {fileID: 1635730233705508, guid: f909ec7bf319acc49b7bc977be0b81d8,
     type: 3}
   m_RightHand: {fileID: 280011903}
-  m_DrawObject: {fileID: 0}
+  m_DrawObject: {fileID: 2086595679}
   m_DrawTick: 0.01
   m_HandColorPickerMat: {fileID: 2100000, guid: 52ecf36b7819f464390ea6be2c89700b,
     type: 2}
@@ -1554,7 +1554,7 @@ MonoBehaviour:
   testLastSendGametime: 0
   meshPrefab: {fileID: 2781801531759310858, guid: 7bf92c310654ff746a97bcce174abd41,
     type: 3}
-  meshMaterial: {fileID: 15303, guid: 0000000000000000f000000000000000, type: 0}
+  meshMaterial: {fileID: 2100000, guid: bb5a4115a419fff4c9b93bd83f096657, type: 2}
 --- !u!114 &2120399475
 MonoBehaviour:
   m_ObjectHideFlags: 0

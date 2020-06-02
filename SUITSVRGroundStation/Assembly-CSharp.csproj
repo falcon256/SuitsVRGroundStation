@@ -366,6 +366,7 @@
     <Compile Include="Assets\Scripts\InMeshInstance.cs" />
     <Compile Include="Assets\Scripts\InputManager.cs" />
     <Compile Include="Assets\Scripts\InputManager2D.cs" />
+    <Compile Include="Assets\Scripts\MeshExpiry.cs" />
     <Compile Include="Assets\Scripts\NetworkController.cs" />
     <Compile Include="Assets\Scripts\Painter2D.cs" />
     <Compile Include="Assets\Scripts\PhotonMeshTransfer.cs" />

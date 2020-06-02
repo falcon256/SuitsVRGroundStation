@@ -37,7 +37,7 @@ public class VRPainter : MonoBehaviour {
     }
 	
 
-	void FixedUpdate ()
+	void Update ()
     {
         if (!InputManager.getSingleton().isDrawing) return; 
         HandleColoring();

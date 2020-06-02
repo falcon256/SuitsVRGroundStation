@@ -9,7 +9,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{D629DA6A-5392-2BFB-691F-8E64EE042130}</ProjectGuid>
+    <ProjectGuid>{4E1FD4A0-98F9-94BD-CED2-0DB692D6A091}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -420,19 +420,19 @@
     <None Include="Assets\Photon\PhotonUnityNetworking\changelog.txt" />
     <None Include="Assets\Oculus\SampleFramework\Usage\DistanceGrab\Materials\CrosshairZCheat.shader" />
     <Reference Include="Unity.TextMeshPro.Editor">
-      <HintPath>C:/GameDev/Repos/SuitsVRGroundStation/SUITSVRGroundStation/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
+      <HintPath>C:/GameDev/Repos/SuitsVRGroundStation/SUITS2DGroundStation/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.PackageManagerUI.Editor">
-      <HintPath>C:/GameDev/Repos/SuitsVRGroundStation/SUITSVRGroundStation/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
+      <HintPath>C:/GameDev/Repos/SuitsVRGroundStation/SUITS2DGroundStation/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.CollabProxy.Editor">
-      <HintPath>C:/GameDev/Repos/SuitsVRGroundStation/SUITSVRGroundStation/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll</HintPath>
+      <HintPath>C:/GameDev/Repos/SuitsVRGroundStation/SUITS2DGroundStation/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>C:/GameDev/Repos/SuitsVRGroundStation/SUITSVRGroundStation/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
+      <HintPath>C:/GameDev/Repos/SuitsVRGroundStation/SUITS2DGroundStation/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Analytics.DataPrivacy">
-      <HintPath>C:/GameDev/Repos/SuitsVRGroundStation/SUITSVRGroundStation/Library/ScriptAssemblies/Unity.Analytics.DataPrivacy.dll</HintPath>
+      <HintPath>C:/GameDev/Repos/SuitsVRGroundStation/SUITS2DGroundStation/Library/ScriptAssemblies/Unity.Analytics.DataPrivacy.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AIModule">
       <HintPath>C:/GameDev/Unity/2018.3.14f1/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>
@@ -639,25 +639,25 @@
       <HintPath>C:/GameDev/Unity/2018.3.14f1/Editor/Data/UnityExtensions/Unity/UnitySpatialTracking/RuntimeEditor/UnityEngine.SpatialTracking.dll</HintPath>
     </Reference>
     <Reference Include="Photon3Unity3D">
-      <HintPath>C:/GameDev/Repos/SuitsVRGroundStation/SUITSVRGroundStation/Assets/Photon/PhotonLibs/Photon3Unity3D.dll</HintPath>
+      <HintPath>C:/GameDev/Repos/SuitsVRGroundStation/SUITS2DGroundStation/Assets/Photon/PhotonLibs/Photon3Unity3D.dll</HintPath>
     </Reference>
     <Reference Include="websocket-sharp">
-      <HintPath>C:/GameDev/Repos/SuitsVRGroundStation/SUITSVRGroundStation/Assets/Photon/PhotonLibs/WebSocket/websocket-sharp.dll</HintPath>
+      <HintPath>C:/GameDev/Repos/SuitsVRGroundStation/SUITS2DGroundStation/Assets/Photon/PhotonLibs/WebSocket/websocket-sharp.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.Advertisements">
-      <HintPath>C:/GameDev/Repos/SuitsVRGroundStation/SUITSVRGroundStation/Library/PackageCache/com.unity.ads@2.3.1/Runtime/UnityEngine.Advertisements.dll</HintPath>
+      <HintPath>C:/GameDev/Repos/SuitsVRGroundStation/SUITS2DGroundStation/Library/PackageCache/com.unity.ads@2.3.1/Runtime/UnityEngine.Advertisements.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.Advertisements.Editor">
-      <HintPath>C:/GameDev/Repos/SuitsVRGroundStation/SUITSVRGroundStation/Library/PackageCache/com.unity.ads@2.3.1/Runtime/UnityEngine.Advertisements.Editor.dll</HintPath>
+      <HintPath>C:/GameDev/Repos/SuitsVRGroundStation/SUITS2DGroundStation/Library/PackageCache/com.unity.ads@2.3.1/Runtime/UnityEngine.Advertisements.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Analytics.Editor">
-      <HintPath>C:/GameDev/Repos/SuitsVRGroundStation/SUITSVRGroundStation/Library/PackageCache/com.unity.analytics@3.2.2/Unity.Analytics.Editor.dll</HintPath>
+      <HintPath>C:/GameDev/Repos/SuitsVRGroundStation/SUITS2DGroundStation/Library/PackageCache/com.unity.analytics@3.2.2/Unity.Analytics.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Analytics.StandardEvents">
-      <HintPath>C:/GameDev/Repos/SuitsVRGroundStation/SUITSVRGroundStation/Library/PackageCache/com.unity.analytics@3.2.2/Unity.Analytics.StandardEvents.dll</HintPath>
+      <HintPath>C:/GameDev/Repos/SuitsVRGroundStation/SUITS2DGroundStation/Library/PackageCache/com.unity.analytics@3.2.2/Unity.Analytics.StandardEvents.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Analytics.Tracker">
-      <HintPath>C:/GameDev/Repos/SuitsVRGroundStation/SUITSVRGroundStation/Library/PackageCache/com.unity.analytics@3.2.2/Unity.Analytics.Tracker.dll</HintPath>
+      <HintPath>C:/GameDev/Repos/SuitsVRGroundStation/SUITS2DGroundStation/Library/PackageCache/com.unity.analytics@3.2.2/Unity.Analytics.Tracker.dll</HintPath>
     </Reference>
     <Reference Include="netstandard">
       <HintPath>C:/GameDev/Unity/2018.3.14f1/Editor/Data/NetStandard/ref/2.0.0/netstandard.dll</HintPath>
@@ -1007,59 +1007,59 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="PhotonUnityNetworking.Utilities.PhotonPlayer.Editor.csproj">
-      <Project>{6EEA91CC-A118-58A5-9B05-458B6EEAB191}</Project>
+      <Project>{63623E75-BA2B-2E66-B76F-035C1FDFF46A}</Project>
       <Name>PhotonUnityNetworking.Utilities.PhotonPlayer.Editor</Name>
     </ProjectReference>
     <ProjectReference Include="PunDemos.DemoHubEditor.csproj">
-      <Project>{DDF8E143-833C-EAB2-45EE-C3B53D4E985A}</Project>
+      <Project>{F594782D-92D3-AEE6-5151-3F93A76B0EFD}</Project>
       <Name>PunDemos.DemoHubEditor</Name>
     </ProjectReference>
     <ProjectReference Include="PunDemos.DemoSlotcarEditor.csproj">
-      <Project>{DBC619D5-8761-C041-2444-842D1646A919}</Project>
+      <Project>{3AB39DD2-5AD7-E5FB-684F-C52D0EB0A420}</Project>
       <Name>PunDemos.DemoSlotcarEditor</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.Demos.csproj">
-      <Project>{F720252D-0D40-EF1A-3A25-2657DB3C2C51}</Project>
+      <Project>{F2BECF42-3359-DB47-204F-36B426BA2A46}</Project>
       <Name>PhotonUnityNetworking.Demos</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.Utilities.csproj">
-      <Project>{54E76CF4-AD74-B8D6-E784-F5D3DF271601}</Project>
+      <Project>{B139C5B7-853B-DC10-49F4-0C4AEC9F2551}</Project>
       <Name>PhotonUnityNetworking.Utilities</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonWebSocket.csproj">
-      <Project>{4D8A3E18-836E-A834-CE39-16E3E90C6397}</Project>
+      <Project>{66A4D044-92CF-D53E-10DF-E84EF61F083B}</Project>
       <Name>PhotonWebSocket</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonRealtime.csproj">
-      <Project>{C91A3567-907B-D77B-4637-DDE1B89E6B56}</Project>
+      <Project>{D5D009D8-346B-125A-F668-B92B1BFA9242}</Project>
       <Name>PhotonRealtime</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.csproj">
-      <Project>{5CD4CAA5-3D6E-9EFA-B985-E6A33E9DCBC7}</Project>
+      <Project>{FE823224-1AFE-3C4C-2EAA-572CEAB3C7EB}</Project>
       <Name>PhotonUnityNetworking</Name>
     </ProjectReference>
     <ProjectReference Include="Oculus.VR.Editor.csproj">
-      <Project>{55BA670D-B3E4-E65C-93CC-1B54956B8069}</Project>
+      <Project>{68FA76A1-BBA2-3554-9719-916AB40FB2A0}</Project>
       <Name>Oculus.VR.Editor</Name>
     </ProjectReference>
     <ProjectReference Include="Oculus.VR.Scripts.Editor.csproj">
-      <Project>{5AB5AF1D-BC29-6FC8-D4D3-A71437FA6C22}</Project>
+      <Project>{B66DA794-225E-5E79-3F82-145734C90AA3}</Project>
       <Name>Oculus.VR.Scripts.Editor</Name>
     </ProjectReference>
     <ProjectReference Include="Oculus.VR.csproj">
-      <Project>{74D7CCF7-B8B1-2613-E27D-6D267804E9CF}</Project>
+      <Project>{4B0BC46A-1FC0-DD4A-8D7A-415DBE7447A5}</Project>
       <Name>Oculus.VR</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonChat.csproj">
-      <Project>{C304E6D3-D15B-43D5-5919-5ABD1AE6140E}</Project>
+      <Project>{A26E805D-251E-B8DD-449C-943177202048}</Project>
       <Name>PhotonChat</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.Utilities.Culling.Editor.csproj">
-      <Project>{70029947-272B-B758-7894-7B97CC58C223}</Project>
+      <Project>{46804EB0-858B-B718-EE5D-453BC47B2A10}</Project>
       <Name>PhotonUnityNetworking.Utilities.Culling.Editor</Name>
     </ProjectReference>
     <ProjectReference Include="PhotonUnityNetworking.Editor.csproj">
-      <Project>{B9483D46-8111-6E70-A21D-C411D09B5F7D}</Project>
+      <Project>{785DCCFA-7A08-7C44-075D-F22163185B65}</Project>
       <Name>PhotonUnityNetworking.Editor</Name>
     </ProjectReference>
   </ItemGroup>
